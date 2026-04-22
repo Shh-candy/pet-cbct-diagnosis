@@ -3,6 +3,9 @@ import os
 import sys
 import tempfile
 from PIL import Image
+# 【必须加在最顶部！】把项目根目录加入 Python 路径
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent))
 
 # 自动导入路径
 current_dir = os.path.dirname(os.path.abspath(__file__))
