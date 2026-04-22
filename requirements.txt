@@ -1,0 +1,23 @@
+# 核心框架
+langchain>=0.2
+langchain-openai>=0.1 # 调用OpenAI模型（也可替换为国内模型如通义千问）
+langchain-community>=0.2
+
+# 影像处理
+opencv-python>=4.9
+pillow>=10.2
+scikit-image>=0.22
+pydicom>=2.4
+
+# 向量库（知识库检索）
+chromadb>=0.5
+
+# 环境管理与工具
+python-dotenv>=1.0
+pandas>=2.2
+numpy>=1.26
+
+# DeepSeek可选依赖（如需直接调用SDK，非必须）
+deepseek-chat>=0.1
+#
+streamlit>=1.32
