@@ -1,6 +1,8 @@
 import sys
 import os
 
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))  # 加到项目根目录
 
 api_key = os.getenv("DOUBAO_API_KEY")
 base_url = os.getenv("DOUBAO_BASE_URL")
