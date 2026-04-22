@@ -1,6 +1,13 @@
 import os
 from dotenv import load_dotenv
 
+import streamlit as st
+
+# 优先从 st.secrets 读取（云端），其次从环境变量读取（本地）
+DEEPSEEK_API_KEY = st.secrets.get("DOUBAO_API_KEY") 
+DEEPSEEK_BASE_URL = st.secrets.get("DOUBAO_BASE_URL") 
+LLM_MODEL_NAME = st.secrets.get("LLM_MODEL_NAME") 
+
 # 加载.env文件
 load_dotenv()
 
