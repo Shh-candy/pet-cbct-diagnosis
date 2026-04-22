@@ -16,7 +16,7 @@ if current_dir not in sys.path:
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from config import DEEPSEEK_API_KEY, DEEPSEEK_BASE_URL, LLM_MODEL_NAME, TEMPERATURE,MAX_TOKENS
+from src.config import DEEPSEEK_API_KEY, DEEPSEEK_BASE_URL, LLM_MODEL_NAME, TEMPERATURE, MAX_TOKENS
 from cbct_image_processor import CBCTImageProcessor
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage, SystemMessage
