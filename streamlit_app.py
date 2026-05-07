@@ -6,6 +6,7 @@ from PIL import Image
 # 【必须加在最顶部！】把项目根目录加入 Python 路径
 from pathlib import Path
 
+
 BASE_DIR = Path(__file__).parent
 sys.path.append(str(BASE_DIR))
 sys.path.append(str(BASE_DIR / "src"))
