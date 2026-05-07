@@ -8,20 +8,17 @@ api_key = os.getenv("DOUBAO_API_KEY")
 base_url = os.getenv("DOUBAO_BASE_URL")
 model_name = os.getenv("MODEL_NAME")
 
-# 获取当前文件所在目录（src目录）
-current_dir = os.path.dirname(os.path.abspath(__file__))
-# 如果当前目录不在sys.path中，则添加
-if current_dir not in sys.path:
-    sys.path.insert(0, current_dir)
-
+BASE_DIR = Path(__file__).parent.parent
+sys.path.append(str(BASE_DIR))
+sys.path.append(str(BASE_DIR / "src"))
 
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from src.cbct_image_processor import CBCTImageProcessor
+from cbct_image_processor import CBCTImageProcessor
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage, SystemMessage
-from src.knowledge_base import PetCBCTKnowledgeBase
+from knowledge_base import PetCBCTKnowledgeBase
 
 # 加载环境变量
 load_dotenv()
