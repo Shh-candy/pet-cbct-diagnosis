@@ -5,13 +5,12 @@ import tempfile
 from PIL import Image
 # 【必须加在最顶部！】把项目根目录加入 Python 路径
 from pathlib import Path
-sys.path.append(str(Path(__file__).parent))
 
-# 自动导入路径
-current_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, current_dir)
+BASE_DIR = Path(__file__).parent
+sys.path.append(str(BASE_DIR))
+sys.path.append(str(BASE_DIR / "src"))
 
-from src.agent import PetCBCTDiagnosisAgent
+from agent import PetCBCTDiagnosisAgent
 
 # ====================== 页面配置 ======================
 st.set_page_config(
