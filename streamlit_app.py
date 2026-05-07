@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).parent
 sys.path.append(str(BASE_DIR))
 sys.path.append(str(BASE_DIR / "src"))
 
-from agent import PetCBCTDiagnosisAgent
+from src.agent import PetCBCTDiagnosisAgent
 
 # ====================== 页面配置 ======================
 st.set_page_config(
