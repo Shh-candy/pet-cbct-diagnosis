@@ -15,10 +15,10 @@ sys.path.append(str(BASE_DIR / "src"))
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from cbct_image_processor import CBCTImageProcessor
+from src.cbct_image_processor import CBCTImageProcessor
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage, SystemMessage
-from knowledge_base import PetCBCTKnowledgeBase
+from src.knowledge_base import PetCBCTKnowledgeBase
 
 # 加载环境变量
 load_dotenv()
