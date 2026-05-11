@@ -8,9 +8,8 @@ api_key = os.getenv("DOUBAO_API_KEY")
 base_url = os.getenv("DOUBAO_BASE_URL")
 model_name = os.getenv("MODEL_NAME")
 
-BASE_DIR = Path(__file__).parent.parent
-sys.path.append(str(BASE_DIR))
-sys.path.append(str(BASE_DIR / "src"))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(BASE_DIR)
 
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
