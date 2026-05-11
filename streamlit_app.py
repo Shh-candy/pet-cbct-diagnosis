@@ -14,7 +14,7 @@ sys.path.append(BASE_DIR)
 # --------------------------
 # 导入
 # --------------------------
-from src.agent import PetCBCTDiagnosisAgent
+from agent import PetCBCTDiagnosisAgent
 
 
 # ====================== 页面配置 ======================
