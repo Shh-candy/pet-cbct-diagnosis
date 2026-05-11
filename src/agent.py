@@ -1,26 +1,33 @@
 import sys
 import os
-
 from pathlib import Path
-sys.path.append(str(Path(__file__).parent.parent))  # 加到项目根目录
 
+# --------------------------
+# 1. 先加路径（必须第一）
+# --------------------------
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(BASE_DIR)
+
+# --------------------------
+# 2. 再加载环境变量（必须第二）
+# --------------------------
+from dotenv import load_dotenv
+load_dotenv()
+
+# --------------------------
+# 3. 最后读环境变量 + 导包
+# --------------------------
 api_key = os.getenv("DOUBAO_API_KEY")
 base_url = os.getenv("DOUBAO_BASE_URL")
 model_name = os.getenv("MODEL_NAME")
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(BASE_DIR)
 
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from src.cbct_image_processor import CBCTImageProcessor
-from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage, SystemMessage
 from src.knowledge_base import PetCBCTKnowledgeBase
 
-# 加载环境变量
-load_dotenv()
 
 class PetCBCTDiagnosisAgent:
     def __init__(self):
