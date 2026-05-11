@@ -24,9 +24,9 @@ model_name = os.getenv("MODEL_NAME")
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from src.cbct_image_processor import CBCTImageProcessor
+from cbct_image_processor import CBCTImageProcessor
 from langchain_core.messages import HumanMessage, SystemMessage
-from src.knowledge_base import PetCBCTKnowledgeBase
+from knowledge_base import PetCBCTKnowledgeBase
 
 
 class PetCBCTDiagnosisAgent:
