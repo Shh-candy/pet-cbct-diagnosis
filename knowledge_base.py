@@ -1,3 +1,4 @@
+from config import KNOWLEDGE_BASE_PATH
 import os
 import json
 
