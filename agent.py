@@ -24,9 +24,9 @@ class PetCBCTDiagnosisAgent:
        timeout=60
 
        self.llm = ChatOpenAI(
-            api_key=DOUBAO_API_KEY,       # 替换为DeepSeek密钥
-            base_url=DOUBAO_BASE_URL,     # 替换为DeepSeek API地址
-            model_name=MODEL_NAME,      # DeepSeek模型名
+            api_key=api_key,
+            base_url=base_url,
+            model_name=model_name,      # DeepSeek模型名
             temperature=temperature,
             timeout=timeout
         )
