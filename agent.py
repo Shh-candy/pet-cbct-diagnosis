@@ -2,9 +2,10 @@ import streamlit as st
 import os
 
 
-api_key = os.getenv("DOUBAO_API_KEY")
-base_url = os.getenv("DOUBAO_BASE_URL")
-model_name = os.getenv("MODEL_NAME")
+api_key = st.secrets["DOUBAO_API_KEY"]
+base_url = st.secrets["DOUBAO_BASE_URL"]
+model_name = st.secrets["MODEL_NAME"]
+
 
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
