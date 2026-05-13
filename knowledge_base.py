@@ -1,6 +1,5 @@
 import os
 import json
-from config import KNOWLEDGE_BASE_PATH
 
 class PetCBCTKnowledgeBase:
     def __init__(self):
