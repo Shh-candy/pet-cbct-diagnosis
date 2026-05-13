@@ -6,7 +6,6 @@ import base64
 import io
 # 假设你的config.py中定义了SAMPLE_IMAGES_PATH，若未定义可手动指定
 # 示例：SAMPLE_IMAGES_PATH = r"C:\Users\shh\Desktop\diagnosis_agent\data\sample_images"
-from config import SAMPLE_IMAGES_PATH
 
 class CBCTImageProcessor:
     def __init__(self):
