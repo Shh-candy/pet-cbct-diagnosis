@@ -5,13 +5,6 @@ import tempfile
 from PIL import Image
 from pathlib import Path
 
-# --------------------------
-# 路径只加这一次就够
-# --------------------------
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(BASE_DIR)
-
-# --------------------------
 # 导入
 # --------------------------
 from agent import PetCBCTDiagnosisAgent
