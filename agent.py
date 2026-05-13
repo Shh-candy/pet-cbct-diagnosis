@@ -1,4 +1,5 @@
 import sys
+import streamlit as st
 import os
 from pathlib import Path
 
@@ -6,11 +7,8 @@ from pathlib import Path
 # 2. 再加载环境变量（必须第二）
 # --------------------------
 from dotenv import load_dotenv
-load_dotenv()
 
-# --------------------------
-# 3. 最后读环境变量 + 导包
-# --------------------------
+
 api_key = os.getenv("DOUBAO_API_KEY")
 base_url = os.getenv("DOUBAO_BASE_URL")
 model_name = os.getenv("MODEL_NAME")
