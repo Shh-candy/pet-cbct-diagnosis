@@ -3,12 +3,6 @@ import os
 from pathlib import Path
 
 # --------------------------
-# 1. 先加路径（必须第一）
-# --------------------------
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(BASE_DIR)
-
-# --------------------------
 # 2. 再加载环境变量（必须第二）
 # --------------------------
 from dotenv import load_dotenv
