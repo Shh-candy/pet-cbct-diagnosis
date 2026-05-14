@@ -1,3 +1,4 @@
+from config import SAMPLE_IMAGES_PATH
 import cv2
 import numpy as np
 from PIL import Image
