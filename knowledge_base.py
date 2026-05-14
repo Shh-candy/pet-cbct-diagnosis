@@ -1,6 +1,8 @@
-from config import KNOWLEDGE_BASE_PATH
+
 import os
 import json
+
+KNOWLEDGE_BASE_PATH = "knowledge_base"  # 存放vet_anatomy_ct.json的文件夹
 
 class PetCBCTKnowledgeBase:
     def __init__(self):
