@@ -79,7 +79,7 @@ with col_right:
                     f.write(uploaded_file.getbuffer())
 
                 # 执行诊断
-                report = agent.diagnose(uploaded_file.name, pet_info)
+                report = agent.diagnose(temp_path, pet_info)
 
                 # 显示报告：修复 ~~ 删除线问题
                 with report_placeholder.container():
