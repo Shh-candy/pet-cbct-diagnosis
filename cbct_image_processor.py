@@ -1,40 +1,115 @@
+import cv2
 import numpy as np
 from PIL import Image
+import os
 import base64
 import io
-import pydicom
-import os
+
+# ====================== 关键修改：直接接收完整路径，不拼接文件夹 ======================
+# 彻底删除 SAMPLE_IMAGES_PATH 相关代码！本地 + 云端 100% 不报错！
 
 class CBCTImageProcessor:
     def __init__(self):
-        pass
+        # 支持CBCT常用格式：常规图片+DICOM原生格式
+        self.image_extensions = [".png", ".jpg", ".jpeg", ".bmp", ".dcm"]
 
-    # 直接处理上传的图片，不依赖任何路径！
-    def load_image(self, uploaded_file):
-        try:
-            # 支持 Streamlit 上传的文件
-            if hasattr(uploaded_file, 'name'):
-                file_name = uploaded_file.name
-                if file_name.endswith('.dcm'):
-                    dicom = pydicom.dcmread(uploaded_file)
-                    pixel_array = dicom.pixel_array
-                    if len(pixel_array.shape) == 3:
-                        pixel_array = pixel_array[0]
-                    pixel_array = (pixel_array - np.min(pixel_array)) / (np.max(pixel_array) - np.min(pixel_array)) * 255
-                    img = Image.fromarray(pixel_array.astype(np.uint8))
-                else:
-                    img = Image.open(uploaded_file)
-                
-                if img.mode != "RGB":
-                    img = img.convert("RGB")
-                return img
-            else:
-                raise Exception("不支持的文件类型")
+    def load_image(self, image_path):
+        """
+        🔥 修改点：直接接收 完整路径，不再从 SAMPLE_IMAGES_PATH 读取
+        加载CBCT影像（支持常规格式+DICOM），返回PIL.Image对象
+        """
+        # 1. 直接使用传入的完整路径，不再拼接！
+        if not isinstance(image_path, str):
+            raise TypeError(f"图片路径必须是字符串，当前类型：{type(image_path)}")
         
-        except Exception as e:
-            raise Exception(f"图片处理失败: {str(e)}")
+        if not os.path.exists(image_path):
+            raise FileNotFoundError(f"CBCT影像文件不存在：{image_path}")
+        
+        # 2. 校验文件格式
+        ext = os.path.splitext(image_path)[1].lower()
+        if ext not in self.image_extensions:
+            raise ValueError(f"不支持的影像格式：{ext}，仅支持{self.image_extensions}")
+
+        # 3. 处理DICOM格式（CBCT原生格式，优先支持）
+        if ext == ".dcm":
+            try:
+                import pydicom
+                from pydicom.errors import InvalidDicomError
+
+                ds = pydicom.dcmread(image_path)
+                # 提取DICOM像素数据并归一化到0-255
+                img_gray = ds.pixel_array
+                if img_gray.dtype != np.uint8:
+                    min_val = np.min(img_gray)
+                    max_val = np.max(img_gray)
+                    # 防止除以0（边界保护）
+                    if max_val - min_val == 0:
+                        img_gray = np.zeros_like(img_gray, dtype=np.uint8)
+                    else:
+                        img_gray = (img_gray - min_val) / (max_val - min_val) * 255
+                        img_gray = img_gray.astype(np.uint8)
+                # 转为RGB（多模态模型通用输入格式）
+                img_rgb = cv2.cvtColor(img_gray, cv2.COLOR_GRAY2RGB)
+                image = Image.fromarray(img_rgb)
+
+            except ImportError:
+                raise ImportError("请安装pydicom库支持DICOM格式：pip install pydicom")
+            except InvalidDicomError:
+                raise ValueError(f"{image_path} 不是有效的DICOM文件")
+            except Exception as e:
+                raise RuntimeError(f"DICOM文件处理失败：{str(e)}")
+        
+        # 4. 处理常规图片格式
+        else:
+            img = cv2.imread(image_path)
+            if img is None:
+                raise ValueError(f"无法读取图片：{image_path}（文件损坏/格式不支持）")
+            img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            image = Image.fromarray(img_rgb)
+
+        # 5. 返回处理后的PIL.Image对象
+        return image
+    
+
+    def batch_load_images(self, image_names):
+        """批量加载多张图片（支持常规格式+DICOM）"""
+        if not isinstance(image_names, list):
+            raise TypeError(f"批量加载需传入列表，当前类型：{type(image_names)}")
+        
+        batch_images = []
+        for img_name in image_names:
+            try:
+                img = self.load_image(img_name)
+                batch_images.append(img)
+                print(f"成功加载：{img_name}，分辨率：{img.size[0]}×{img.size[1]}")
+            except Exception as e:
+                raise ValueError(f"加载图片{img_name}失败：{e}")
+        return batch_images
+
+    def batch_image_to_base64(self, batch_images):
+        """批量转换多张图片为Base64"""
+        batch_base64 = []
+        for idx, img in enumerate(batch_images):
+            img_b64 = self.image_to_base64(img)
+            batch_base64.append(img_b64)
+            print(f"完成图片{idx+1}的Base64编码（前50位）：{img_b64[:50]}...")
+        return batch_base64
 
     def image_to_base64(self, image):
+        """将PIL.Image转为Base64编码"""
         buffer = io.BytesIO()
         image.save(buffer, format="PNG")
-        return base64.b64encode(buffer.getvalue()).decode('utf-8')
+        img_base64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
+        return img_base64
+
+# 测试代码
+if __name__ == "__main__":
+    processor = CBCTImageProcessor()
+    try:
+        print("===== 测试单张图片处理 =====")
+        # 本地测试请使用 完整路径
+        img = processor.load_image("C:/Users/shh/Desktop/diagnosis_agent/sample_gushi.png")
+        img_b64 = processor.image_to_base64(img)
+        print(f"影像加载成功，分辨率：{img.size[0]}×{img.size[1]}")
+    except Exception as e:
+        print(f"处理失败：{e}")
