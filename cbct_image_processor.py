@@ -1,6 +1,3 @@
-# 直接在这里定义，永远不报错！
-SAMPLE_IMAGES_PATH = "images"
-
 import cv2
 import numpy as np
 from PIL import Image
