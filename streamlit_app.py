@@ -39,7 +39,7 @@ col_left, col_right = st.columns([1, 1.2], gap="large")
 
 # ---------------------- 左侧：上传 + 预览 ----------------------
 with col_left:
-    st.subheader("📸 影像上传（单框多次追加）")
+    st.subheader("📸 影像上传")
 
     # ===== 唯一上传框：允许多选，但靠session实现分次追加 =====
     new_files = st.file_uploader(
@@ -64,7 +64,7 @@ with col_left:
     st.divider()
 
     # 预览所有已上传图片
-    st.subheader("🖼️ 已上传预览")
+    st.subheader(" 已上传预览")
     if st.session_state.image_list:
         for idx, img_file in enumerate(st.session_state.image_list):
             try:
