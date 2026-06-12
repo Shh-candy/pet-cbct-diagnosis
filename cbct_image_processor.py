@@ -102,14 +102,23 @@ class CBCTImageProcessor:
         img_base64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
         return img_base64
 
-# 测试代码
+# 统一的测试入口（合并重复的if __name__）
 if __name__ == "__main__":
     processor = CBCTImageProcessor()
     try:
+        # 测试1：单张图片加载+Base64转换
         print("===== 测试单张图片处理 =====")
-        # 本地测试请使用 完整路径
-        img = processor.load_image("C:/Users/shh/Desktop/diagnosis_agent/sample_gushi.png")
+        img = processor.load_image("sample_gushi.png")  # 替换为你的图片名
         img_b64 = processor.image_to_base64(img)
         print(f"影像加载成功，分辨率：{img.size[0]}×{img.size[1]}")
+        print(f"Base64编码前100位：{img_b64[:100]}...")
+
+        # 测试2：批量图片处理
+        print("\n===== 测试批量图片处理 =====")
+        img_names = ["sample_gushi.png", "test_lung.png"]  # 替换为你的图片名
+        batch_imgs = processor.batch_load_images(img_names)
+        batch_b64 = processor.batch_image_to_base64(batch_imgs)
+        print(f"\n批量处理完成，共加载{len(batch_imgs)}张图片")
+
     except Exception as e:
         print(f"处理失败：{e}")
