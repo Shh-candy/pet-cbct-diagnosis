@@ -88,7 +88,7 @@ class PetCBCTDiagnosisAgent:
         :param file_path_list: 图片完整路径列表
         :param pet_info: 宠物信息
         :return: 诊断报告
-        """
+      """
         try:
             # 批量加载图片
             img_batch = self.image_processor.batch_load_images(file_path_list)
