@@ -127,7 +127,7 @@ class PetCBCTDiagnosisAgent:
 
             return diagnosis_report
 
-        except Exception as e:
+    except Exception as e:
             return f"【诊断失败】错误原因：{str(e)}\n请检查：1.影像文件名/格式是否正确；2.API密钥是否有效；3.模型名是否正确。"
            
 
