@@ -39,12 +39,13 @@ col_left, col_right = st.columns([1, 1.2], gap="large")
 
 # ---------------------- 左侧：上传 + 预览 ----------------------
 with col_left:
-    st.subheader("📸 影像上传与预览")
-    
-    uploaded_file = st.file_uploader(
-        "选择单张/多张CBCT影像",
+    st.subheader("📸 影像上传（单框多次追加）")
+
+    # ===== 唯一上传框：允许多选，但靠session实现分次追加 =====
+    new_files = st.file_uploader(
+        "每次可单选/多选，多次上传会自动追加",
         type=["png", "jpg", "jpeg", "bmp"],
-        accept_multiple_files=False
+        accept_multiple_files=True
     )
     
      # 把本次新选的图片追加到session列表（去重，避免重复上传同一张）
