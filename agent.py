@@ -83,13 +83,13 @@ class PetCBCTDiagnosisAgent:
        self.diagnosis_chain = self.diagnosis_prompt | self.llm | StrOutputParser()
 
     def diagnose(self, image_names, pet_info="未提供"):
-      """
+        """
         支持多张图片批量诊断
         :param file_path_list: 图片完整路径列表
         :param pet_info: 宠物信息
         :return: 诊断报告
-      """
-        try:
+        """
+    try:
             # 批量加载图片
             img_batch = self.image_processor.batch_load_images(file_path_list)
             # 批量转base64
