@@ -40,29 +40,48 @@ with col_left:
     st.subheader("📸 影像上传与预览")
     
     uploaded_file = st.file_uploader(
-        "选择单张CBCT影像",
+        "选择单张/多张CBCT影像",
         type=["png", "jpg", "jpeg", "bmp"],
         accept_multiple_files=False
     )
     
-    pet_info = st.text_area(
-        "宠物信息",
-        placeholder="例：金渐层，7岁，呼吸困难",
-        height=100
-    )
-    
+     # 把本次新选的图片追加到session列表（去重，避免重复上传同一张）
+    if new_files:
+        existing_names = [f.name for f in st.session_state.image_list]
+        for f in new_files:
+            if f.name not in existing_names:
+                st.session_state.image_list.append(f)
+        st.success(f"✅ 本次新增 {len(new_files)} 张，当前共 {len(st.session_state.image_list)} 张")
+
+    # 清空按钮（重置session）
+    if st.button("🗑️ 清空所有图片", use_container_width=True):
+        st.session_state.image_list = []
+        st.experimental_rerun()
+
+    st.divider()
+
+    # 预览所有已上传图片
+    st.subheader("🖼️ 已上传预览")
+    if st.session_state.image_list:
+        for idx, img_file in enumerate(st.session_state.image_list):
+            try:
+                img = Image.open(img_file)
+                st.image(img, width=280, caption=f"第 {idx+1} 张：{img_file.name}")
+            except:
+                st.warning(f"第 {idx+1} 张预览失败")
+    else:
+        st.info("暂无图片，请上传")
+
+    st.divider()
+
+    # 宠物信息 + 诊断按钮
+    pet_info = st.text_area("宠物信息", placeholder="例：金渐层，雌性，7岁，呼吸困难", height=100)
     run_btn = st.button(
         "开始诊断",
         type="primary",
         use_container_width=True,
-        disabled=not (uploaded_file and pet_info)
+        disabled=not (st.session_state.image_list and pet_info)
     )
-
-    # 小图预览（无废弃参数，修复宽度警告）
-    if uploaded_file:
-        img = Image.open(uploaded_file)
-        st.caption("✅ 影像预览")
-        st.image(img, width=280)  #  用 width，无废弃参数
 
 # ---------------------- 右侧：诊断报告 ----------------------
 with col_right:
@@ -70,23 +89,25 @@ with col_right:
     report_placeholder = st.empty()
 
     if run_btn and uploaded_file:
-        with st.spinner("🔍 正在分析影像..."):
+        with st.spinner("🔍 正在分析所有影像..."):
             try:
-                # 临时文件（无路径限制）
+                # 把session里所有图片写到临时目录
                 temp_dir = tempfile.mkdtemp()
-                temp_path = os.path.join(temp_dir, uploaded_file.name)
-                with open(temp_path, "wb") as f:
-                    f.write(uploaded_file.getbuffer())
+                file_path_list = []
+                for f in st.session_state.image_list:
+                    path = os.path.join(temp_dir, f.name)
+                    with open(path, "wb") as wf:
+                        wf.write(f.getbuffer())
+                    file_path_list.append(path)
 
-                # 执行诊断
-                report = agent.diagnose(temp_path, pet_info)
+                # 传给智能体：一次诊断全部图片
+                report = agent.diagnose(file_path_list, pet_info)
 
-                # 显示报告：修复 ~~ 删除线问题
+                # 展示报告
                 with report_placeholder.container():
                     st.success("✅ 诊断完成")
                     st.divider()
-                    # 关键：用 text 而不是 write，避免 markdown 误解析 ~~
-                    st.text(report)  
+                    st.text(report)
 
             except Exception as e:
                 st.error(f"诊断失败：{str(e)}")
