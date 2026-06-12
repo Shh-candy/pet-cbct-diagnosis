@@ -91,7 +91,7 @@ with col_right:
     st.subheader("🩺 AI 诊断报告")
     report_placeholder = st.empty()
 
-    if run_btn and uploaded_file:
+    if run_btn :
         with st.spinner("🔍 正在分析所有影像..."):
             try:
                 # 把session里所有图片写到临时目录
