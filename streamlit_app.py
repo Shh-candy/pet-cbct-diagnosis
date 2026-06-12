@@ -7,7 +7,7 @@ from pathlib import Path
 
 # 导入
 # --------------------------
-from src.agent import PetCBCTDiagnosisAgent
+from agent import PetCBCTDiagnosisAgent
 
 if "image_list" not in st.session_state:
     st.session_state.image_list = []  # 始终保留已上传的所有图片
