@@ -83,37 +83,45 @@ class PetCBCTDiagnosisAgent:
        self.diagnosis_chain = self.diagnosis_prompt | self.llm | StrOutputParser()
 
     def diagnose(self, image_names, pet_info="未提供"):
-        """
-        执行CBCT影像诊断
-        :param image_names: 影像文件名（位于sample_images目录）
-        :param pet_info: 宠物基本信息（如品种、年龄、性别、症状）
-        :return: 结构化诊断结果（字符串）
+      """
+        支持多张图片批量诊断
+        :param file_path_list: 图片完整路径列表
+        :param pet_info: 宠物信息
+        :return: 诊断报告
         """
         try:
-            # 1. 处理影像，提取特征
-            image = self.image_processor.load_image(image_names)
-            image_b64 = self.image_processor.image_to_base64(image)  # image_features = self.image_processor.extract_features(image)
-            # 补充宠物信息 if pet_info:image_features += f"\n### 宠物基本信息：{pet_info}"
+            # 批量加载图片
+            img_batch = self.image_processor.batch_load_images(file_path_list)
+            # 批量转base64
+            b64_batch = self.image_processor.batch_image_to_base64(img_batch)
 
-            #2：构建多模态输入（DeepSeek标准格式：文本+Base64影像）
+            # 拼接提示文本 + 多张图片多模态内容
+            text_content = self.diagnosis_prompt.format(pet_info=pet_info)
+            content_list = [
+                {
+                    "type": "text",
+                    "text": text_content
+                }
+            ]
+
+            # 循环追加所有图片
+            for b64_str in b64_batch:
+                content_list.append({
+                    "type": "image_url",
+                    "image_url": {
+                        "url": f"data:image/png;base64,{b64_str}"
+                    }
+                })
+
+            # 组装请求体
             multimodal_input = [
                 {
                     "role": "user",
-                    "content":[
-                  {  "type": "text",
-                    "text": self.diagnosis_prompt.format(pet_info=pet_info)
-                },
-                {
-                    "type": "image_url",
-                    "image_url": {
-                        "url": f"data:image/png;base64,{image_b64}"  # 固定格式
-                    }
-                }
-            ]
+                    "content": content_list
                 }
             ]
 
-            # 2. 执行诊断,调用DeepSeek多模态模型直诊，解析输出
+            # 调用模型并解析结果
             response = self.llm.invoke(multimodal_input)
             diagnosis_report = StrOutputParser().invoke(response)
 
@@ -121,17 +129,18 @@ class PetCBCTDiagnosisAgent:
 
         except Exception as e:
             return f"【诊断失败】错误原因：{str(e)}\n请检查：1.影像文件名/格式是否正确；2.API密钥是否有效；3.模型名是否正确。"
-            #diagnosis_result = self.diagnosis_chain.invoke({"pet_info": pet_info, "image_features": image_features
            
 
 # 测试代码
 if __name__ == "__main__":
     agent = PetCBCTDiagnosisAgent()
     # 测试诊断（替换为你的测试图片）
-    result = agent.diagnose(
-        image_names="C:/Users/shh/Desktop/diagnosis_agent/sample_gushi.png",
-        pet_info="金渐层猫,7岁,近期出现呼吸困难"
-    )
+    # 路径放在 [] 内，构成列表
+    path_list = [
+        r"C:/Users/shh/Desktop/diagnosis_agent/sample_gushi.png",
+        r"C:/Users/shh/Desktop/diagnosis_agent/test_lung.png"
+        ]
+    result = agent.diagnose(path_list, pet_info="金渐层猫,7岁,近期出现呼吸困难")
     print("=== 宠物CBCT影像诊断结果 ===")
     print(result)
 
