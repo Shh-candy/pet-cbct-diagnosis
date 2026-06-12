@@ -9,6 +9,8 @@ from pathlib import Path
 # --------------------------
 from agent import PetCBCTDiagnosisAgent
 
+if "image_list" not in st.session_state:
+    st.session_state.image_list = []  # 始终保留已上传的所有图片
 
 # ====================== 页面配置 ======================
 st.set_page_config(
